@@ -1,8 +1,7 @@
-"use server";
-
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function humanizeText(text: string, personaInstructions: string) {
+    // NEXT_PUBLIC_ is required for the key to be accessible on the client side
     const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
     if (!apiKey) {
         throw new Error("Gemini API Key is missing. Please check your .env.local file.");
