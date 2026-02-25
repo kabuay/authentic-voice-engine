@@ -13,6 +13,12 @@ interface Persona {
   instructions: string;
 }
 
+const DEFAULT_PERSONA: Persona = {
+  id: "default",
+  name: "Standard Human",
+  instructions: "Rewrite the text to sound clear, natural, and authentically human. Keep it engaging but professional, and strictly avoid robotic phrasing."
+};
+
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -37,7 +43,11 @@ export default function Home() {
 
   // Fetch personas
   const fetchPersonas = async () => {
-    if (!user) return; // Only fetch if authenticated
+    if (!user) {
+      setPersonas([DEFAULT_PERSONA]);
+      setLoadingPersonas(false);
+      return;
+    }
     try {
       setLoadingPersonas(true);
       const q = query(collection(db, "personas"), orderBy("createdAt", "desc"));
@@ -46,9 +56,9 @@ export default function Home() {
         id: doc.id,
         ...doc.data()
       })) as Persona[];
-      setPersonas(fetchedPersonas);
-      if (fetchedPersonas.length > 0 && !selectedPersonaId) {
-        setSelectedPersonaId(fetchedPersonas[0].id);
+      setPersonas([DEFAULT_PERSONA, ...fetchedPersonas]);
+      if (!selectedPersonaId || selectedPersonaId === "") {
+        setSelectedPersonaId(DEFAULT_PERSONA.id);
       }
     } catch (err) {
       console.error("Error fetching personas:", err);
@@ -69,16 +79,17 @@ export default function Home() {
     if (user) {
       fetchPersonas();
     } else {
-      setPersonas([]);
-      setSelectedPersonaId("");
+      setPersonas([DEFAULT_PERSONA]);
+      setSelectedPersonaId(DEFAULT_PERSONA.id);
     }
   }, [user]);
 
   const handleGoogleSignIn = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error signing in with Google", error);
+      alert("Sign-in failed. Ensure third-party cookies are allowed or try again. Error: " + error?.message);
     }
   };
 
@@ -198,22 +209,21 @@ export default function Home() {
         </div>
 
         <div className="flex gap-3">
+          <button
+            onClick={() => setIsVaultOpen(true)}
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/10 px-5 py-2.5 rounded-full font-medium text-white transition-all shadow-lg active:scale-95"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <span className="hidden sm:inline">The Vault</span>
+          </button>
+
           {user && (
-            <>
-              <button
-                onClick={() => setIsVaultOpen(true)}
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/10 px-5 py-2.5 rounded-full font-medium text-white transition-all shadow-lg active:scale-95"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                <span className="hidden sm:inline">Manage Personas</span>
-              </button>
-              <button
-                onClick={handleSignOut}
-                className="flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 px-5 py-2.5 rounded-full font-medium transition-all shadow-lg active:scale-95"
-              >
-                <span className="hidden sm:inline">Sign Out</span>
-              </button>
-            </>
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 px-5 py-2.5 rounded-full font-medium transition-all shadow-lg active:scale-95"
+            >
+              <span className="hidden sm:inline">Sign Out</span>
+            </button>
           )}
         </div>
       </nav>
@@ -264,44 +274,61 @@ export default function Home() {
             <div className="flex flex-col gap-2 pr-10">
               <h2 className="text-3xl font-bold text-white tracking-tight">The Vault</h2>
               <p className="text-[15px] text-[--color-text-muted] leading-relaxed">
-                Curate the instructions, tone, and specific flair for your distinct writing personas.
+                {user
+                  ? "Curate the instructions, tone, and specific flair for your distinct writing personas."
+                  : "Sign in to create, manage, and securely save your custom writing personas."}
               </p>
             </div>
 
-            <form onSubmit={handleSavePersona} className="flex flex-col gap-6">
-              <div className="flex flex-col gap-2.5">
-                <label htmlFor="persona-name" className="text-sm font-semibold text-white/80 tracking-wide uppercase">Persona Name</label>
-                <input
-                  id="persona-name"
-                  type="text"
-                  value={newPersonaName}
-                  onChange={(e) => setNewPersonaName(e.target.value)}
-                  placeholder="e.g., Aggressive Sales Exec"
-                  className="glass-input px-5 py-4 text-[15px]"
-                  required
-                />
+            {!user ? (
+              <div className="flex flex-col items-center justify-center py-10 gap-6 text-center border-t border-white/10 mt-2">
+                <div className="w-20 h-20 mb-2 relative">
+                  <img src="/logo.png" alt="Balay School Logo" className="w-full h-full object-contain drop-shadow-2xl opacity-80" />
+                </div>
+                <button
+                  onClick={handleGoogleSignIn}
+                  className="w-full max-w-sm relative z-10 flex items-center justify-center gap-3 bg-white text-black hover:bg-gray-100 px-6 py-4 rounded-full font-semibold transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95 duration-300"
+                >
+                  <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" /><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" /><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" /><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" /></svg>
+                  Sign in with Google
+                </button>
               </div>
+            ) : (
+              <form onSubmit={handleSavePersona} className="flex flex-col gap-6">
+                <div className="flex flex-col gap-2.5">
+                  <label htmlFor="persona-name" className="text-sm font-semibold text-white/80 tracking-wide uppercase">Persona Name</label>
+                  <input
+                    id="persona-name"
+                    type="text"
+                    value={newPersonaName}
+                    onChange={(e) => setNewPersonaName(e.target.value)}
+                    placeholder="e.g., Aggressive Sales Exec"
+                    className="glass-input px-5 py-4 text-[15px]"
+                    required
+                  />
+                </div>
 
-              <div className="flex flex-col gap-2.5">
-                <label htmlFor="persona-instructions" className="text-sm font-semibold text-white/80 tracking-wide uppercase">Instructions & Style Guide</label>
-                <textarea
-                  id="persona-instructions"
-                  value={newPersonaInstructions}
-                  onChange={(e) => setNewPersonaInstructions(e.target.value)}
-                  placeholder="Describe your ideal tone. E.g., Use extremely short, punchy sentences. Maximum burstiness. Leverage subtle sarcasm."
-                  className="glass-input px-5 py-4 text-[15px] min-h-[180px] resize-y"
-                  required
-                />
-              </div>
+                <div className="flex flex-col gap-2.5">
+                  <label htmlFor="persona-instructions" className="text-sm font-semibold text-white/80 tracking-wide uppercase">Instructions & Style Guide</label>
+                  <textarea
+                    id="persona-instructions"
+                    value={newPersonaInstructions}
+                    onChange={(e) => setNewPersonaInstructions(e.target.value)}
+                    placeholder="Describe your ideal tone. E.g., Use extremely short, punchy sentences. Maximum burstiness. Leverage subtle sarcasm."
+                    className="glass-input px-5 py-4 text-[15px] min-h-[180px] resize-y"
+                    required
+                  />
+                </div>
 
-              <button
-                type="submit"
-                disabled={savingPersona}
-                className="btn-primary mt-4 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
-              >
-                {savingPersona ? "Saving..." : "Save to Vault"}
-              </button>
-            </form>
+                <button
+                  type="submit"
+                  disabled={savingPersona}
+                  className="btn-primary mt-4 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
+                >
+                  {savingPersona ? "Saving..." : "Save to Vault"}
+                </button>
+              </form>
+            )}
           </section>
         </div>
       )}
@@ -320,7 +347,7 @@ export default function Home() {
             <div className="flex flex-col gap-2.5">
               <div className="flex justify-between items-center px-1">
                 <label htmlFor="persona-select" className="text-sm font-semibold text-white/80 tracking-wide uppercase">Active Persona</label>
-                {personas.length > 0 && selectedPersonaId && (
+                {personas.length > 0 && selectedPersonaId && selectedPersonaId !== "default" && user && (
                   <button
                     type="button"
                     onClick={handleDeletePersonaClick}
@@ -421,32 +448,6 @@ export default function Home() {
         </div>
       )}
 
-      {!authLoading && !user && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xl animate-[fadeIn_0.5s_ease-out]">
-          <div className="glass-panel p-10 md:p-14 max-w-md w-full mx-4 flex flex-col items-center text-center gap-8 relative overflow-hidden">
-            <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-gradient-to-br from-[--color-brand-start] opacity-20 via-transparent to-[--color-brand-end] pointer-events-none rounded-full blur-3xl"></div>
-
-            <div className="w-24 h-24 mb-2 relative">
-              <img src="/logo.png" alt="Balay School Logo" className="w-full h-full object-contain drop-shadow-2xl" />
-            </div>
-
-            <div className="flex flex-col gap-3 relative z-10">
-              <h2 className="text-3xl font-bold text-white tracking-tight">Welcome Back</h2>
-              <p className="text-[15px] text-[--color-text-muted] leading-relaxed">
-                Sign in with your Balay School account to access the Authentic Voice Engine.
-              </p>
-            </div>
-
-            <button
-              onClick={handleGoogleSignIn}
-              className="w-full relative z-10 flex items-center justify-center gap-3 bg-white text-black hover:bg-gray-100 px-6 py-4 rounded-full font-semibold transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95 duration-300"
-            >
-              <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" /><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" /><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" /><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" /></svg>
-              Sign in with Google
-            </button>
-          </div>
-        </div>
-      )}
     </main>
   );
 }
