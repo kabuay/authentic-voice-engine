@@ -13,11 +13,23 @@ interface Persona {
   instructions: string;
 }
 
-const DEFAULT_PERSONA: Persona = {
-  id: "default",
-  name: "Standard Human",
-  instructions: "Rewrite the text to sound clear, natural, and authentically human. Keep it engaging but professional, and strictly avoid robotic phrasing."
-};
+const DEFAULT_PERSONAS: Persona[] = [
+  {
+    id: "default-1",
+    name: "Standard Human",
+    instructions: "Rewrite the text to sound clear, natural, and authentically human. Keep it engaging but professional, and strictly avoid robotic phrasing."
+  },
+  {
+    id: "default-2",
+    name: "Pirate Captain",
+    instructions: "Rewrite the text as a swashbuckling pirate captain. Use nautical terms, pirate slang (like 'arrr', 'matey', 'shiver me timbers'), and a generally boisterous and aggressive tone."
+  },
+  {
+    id: "default-3",
+    name: "Gen-Z Influencer",
+    instructions: "Rewrite the text in the style of a TikTok or Instagram Gen-Z influencer. Use lots of current slang (e.g., 'no cap', 'fr fr', 'slay', 'bet'), use an overly enthusiastic, casual tone and add exactly one relevant emoji at the end of the text."
+  }
+];
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
@@ -44,7 +56,7 @@ export default function Home() {
   // Fetch personas
   const fetchPersonas = async () => {
     if (!user) {
-      setPersonas([DEFAULT_PERSONA]);
+      setPersonas([...DEFAULT_PERSONAS]);
       setLoadingPersonas(false);
       return;
     }
@@ -56,9 +68,9 @@ export default function Home() {
         id: doc.id,
         ...doc.data()
       })) as Persona[];
-      setPersonas([DEFAULT_PERSONA, ...fetchedPersonas]);
+      setPersonas([...DEFAULT_PERSONAS, ...fetchedPersonas]);
       if (!selectedPersonaId || selectedPersonaId === "") {
-        setSelectedPersonaId(DEFAULT_PERSONA.id);
+        setSelectedPersonaId(DEFAULT_PERSONAS[0].id);
       }
     } catch (err) {
       console.error("Error fetching personas:", err);
@@ -79,8 +91,9 @@ export default function Home() {
     if (user) {
       fetchPersonas();
     } else {
-      setPersonas([DEFAULT_PERSONA]);
-      setSelectedPersonaId(DEFAULT_PERSONA.id);
+      setPersonas([...DEFAULT_PERSONAS]);
+      setSelectedPersonaId(DEFAULT_PERSONAS[0].id);
+      setLoadingPersonas(false);
     }
   }, [user]);
 
@@ -96,8 +109,8 @@ export default function Home() {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      setPersonas([]);
-      setSelectedPersonaId("");
+      setPersonas([...DEFAULT_PERSONAS]);
+      setSelectedPersonaId(DEFAULT_PERSONAS[0].id);
       setInputText("");
       setHumanizedText("");
     } catch (error) {
@@ -347,7 +360,7 @@ export default function Home() {
             <div className="flex flex-col gap-2.5">
               <div className="flex justify-between items-center px-1">
                 <label htmlFor="persona-select" className="text-sm font-semibold text-white/80 tracking-wide uppercase">Active Persona</label>
-                {personas.length > 0 && selectedPersonaId && selectedPersonaId !== "default" && user && (
+                {personas.length > 0 && selectedPersonaId && !selectedPersonaId.startsWith("default-") && user && (
                   <button
                     type="button"
                     onClick={handleDeletePersonaClick}
