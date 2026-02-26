@@ -27,6 +27,31 @@ const DEFAULT_PERSONAS: Persona[] = [
     id: "default-3",
     name: "Gen-Z Influencer",
     instructions: "Rewrite the text in the style of a TikTok or Instagram Gen-Z influencer. Use lots of current slang (e.g., 'no cap', 'fr fr', 'slay', 'bet'), use an overly enthusiastic, casual tone and add exactly one relevant emoji at the end of the text."
+  },
+  {
+    id: "default-4",
+    name: "Academic Scholar",
+    instructions: "Rewrite the text in a formal, scholarly tone suitable for an academic paper or journal. Use precise vocabulary, structured argumentation, and cite-worthy phrasing. Avoid contractions and colloquialisms entirely."
+  },
+  {
+    id: "default-5",
+    name: "Poetic Soul",
+    instructions: "Rewrite the text with rich, lyrical language full of vivid imagery and metaphor. Let the words flow with rhythm and emotion, as if composing prose poetry. Prioritize beauty of expression over bluntness."
+  },
+  {
+    id: "default-6",
+    name: "Storyteller",
+    instructions: "Rewrite the text as if narrating a compelling story. Draw the reader in with scene-setting details, dramatic pacing, and a warm, engaging narrative voice. Make even mundane topics feel like an adventure worth following."
+  },
+  {
+    id: "default-7",
+    name: "Corporate Executive",
+    instructions: "Rewrite the text in a polished, boardroom-ready corporate tone. Use strategic language, action-oriented phrasing, and leadership vocabulary. Keep it concise, authoritative, and results-driven."
+  },
+  {
+    id: "default-8",
+    name: "Creative Maverick",
+    instructions: "Rewrite the text with bold, unconventional flair. Break traditional writing rules when it serves the message. Use unexpected word choices, playful sentence structures, and a confident, boundary-pushing voice that stands out."
   }
 ];
 
