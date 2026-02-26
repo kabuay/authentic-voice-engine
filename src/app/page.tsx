@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { collection, addDoc, getDocs, orderBy, query, deleteDoc, doc } from "firebase/firestore";
 import { db, auth, googleProvider } from "../firebase";
 import { signInWithPopup, signOut, onAuthStateChanged, User } from "firebase/auth";
+import { humanizeText } from "./actions";
 import Image from "next/image";
 
 interface Persona {
@@ -177,16 +178,7 @@ export default function Home() {
       setIsHumanizing(true);
       setError(null);
 
-      const response = await fetch("/api/humanize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: inputText,
-          personaInstructions: selectedPersona.instructions
-        })
-      });
-
-      const result = await response.json();
+      const result = await humanizeText(inputText, selectedPersona.instructions);
 
       if (result.success && result.text) {
         setHumanizedText(result.text);
