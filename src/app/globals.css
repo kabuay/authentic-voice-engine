@@ -1,18 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-background: #000000;
-  --color-surface: rgba(25, 25, 25, 0.4);
-  --color-surface-hover: rgba(40, 40, 40, 0.5);
+  --color-background: #f8f7ff;
+  --color-background-alt: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f3f2ff;
 
-  --color-brand-start: #3b28cc;
-  --color-brand-mid: #9b28cc;
-  --color-brand-end: #ff2a85;
+  --color-brand-start: #9333ea;
+  --color-brand-end: #db2777;
 
-  --color-text-main: #f5f5f7;
-  --color-text-muted: #86868b;
-  --color-border: rgba(255, 255, 255, 0.1);
-  --color-ring: rgba(255, 42, 133, 0.5);
+  --color-text-main: #0f172a;
+  --color-text-body: #334155;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-ring: rgba(147, 51, 234, 0.3);
+
+  --color-navy: #1e1b4b;
 }
 
 html,
@@ -21,18 +25,7 @@ body {
   overflow-x: hidden;
   background-color: var(--color-background);
   color: var(--color-text-main);
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "SF Pro Display",
-    "SF Pro Text",
-    "Segoe UI",
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Helvetica,
-    Arial,
-    sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -48,66 +41,75 @@ a {
   text-decoration: none;
 }
 
-/* Apple-style Glassmorphism Panel Utilities */
-.glass-panel {
+.font-serif {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* Card / Panel Utilities */
+.card {
   background: var(--color-surface);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--color-border);
   border-radius: 24px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
 }
 
-.glass-input {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+/* Input Utilities */
+.clean-input {
+  background: var(--color-background);
+  border: 1.5px solid var(--color-border);
   border-radius: 12px;
   color: var(--color-text-main);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  width: 100%;
+  display: block;
+  transition: all 0.2s ease;
 }
 
-.glass-input:focus {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+.clean-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.clean-input:focus {
+  background: #fff;
+  border-color: var(--color-brand-start);
   outline: none;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 3px var(--color-ring);
+}
+
+/* Select specific */
+select.clean-input {
+  appearance: none;
 }
 
 /* Brand Gradient Utilities */
 .text-gradient-brand {
-  background: linear-gradient(135deg, var(--color-brand-start), var(--color-brand-mid), var(--color-brand-end));
+  background: linear-gradient(135deg, var(--color-brand-start), var(--color-brand-end));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .bg-gradient-brand {
-  background: linear-gradient(135deg, var(--color-brand-start), var(--color-brand-mid), var(--color-brand-end));
-}
-
-.bg-gradient-brand-hover:hover {
-  background: linear-gradient(135deg, #4d3be0, #b23be0, #ff4d9c);
+  background: linear-gradient(135deg, var(--color-brand-start), var(--color-brand-end));
 }
 
 /* Button Utilities */
 .btn-primary {
-  background: linear-gradient(135deg, var(--color-brand-start), var(--color-brand-mid), var(--color-brand-end));
-  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--color-brand-start), var(--color-brand-end));
+  padding: 0.8rem 1.75rem;
   border-radius: 9999px;
   font-weight: 600;
+  font-size: 0.95rem;
   color: white;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
   border: none;
   cursor: pointer;
+  box-shadow: 0 4px 14px rgba(147, 51, 234, 0.35);
+  transition: all 0.25s ease;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #4d3be0, #b23be0, #ff4d9c);
-  box-shadow: 0 0 20px var(--color-ring);
-  transform: scale(1.02);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 20px rgba(147, 51, 234, 0.5);
+  transform: translateY(-1px);
 }
 
 .btn-primary:active:not(:disabled) {
@@ -115,29 +117,43 @@ a {
 }
 
 .btn-secondary {
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: 1.5px solid var(--color-border);
+  padding: 0.8rem 1.75rem;
   border-radius: 9999px;
   font-weight: 600;
-  color: white;
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
+  font-size: 0.95rem;
+  color: var(--color-text-body);
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.15);
+  background: var(--color-surface-hover);
+  border-color: #c4b5fd;
+  color: var(--color-brand-start);
 }
 
 .btn-secondary:active:not(:disabled) {
   transform: scale(0.98);
 }
 
+/* Icon badge (like Balay School feature icons) */
+.icon-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--color-brand-start), var(--color-brand-end));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -145,10 +161,34 @@ a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: #cbd5e1;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: #94a3b8;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
